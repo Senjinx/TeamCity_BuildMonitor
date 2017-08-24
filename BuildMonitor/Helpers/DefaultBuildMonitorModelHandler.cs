@@ -3,128 +3,137 @@ using Newtonsoft.Json;
 
 namespace BuildMonitor.Helpers
 {
-	public class DefaultBuildMonitorModelHandler : BuildMonitorModelHandlerBase
-	{
-		public override BuildMonitorViewModel GetModel()
-		{
-			var model = new BuildMonitorViewModel();
+    public class DefaultBuildMonitorModelHandler : BuildMonitorModelHandlerBase
+    {
+        public override BuildMonitorViewModel GetModel()
+        {
+            var model = new BuildMonitorViewModel();
 
-			GetTeamCityBuildsJson();
+            GetTeamCityBuildsJson();
 
-			var count = (int)projectsJson.count;
-			for (int i = 0; i < count; i++)
-			{
-				var project = new Project();
-				var projectJson = projectsJson.project[i];
+            var count = (int)projectsJson.count;
+            for (int i = 0; i < count; i++)
+            {
+                var project = new Project();
+                var projectJson = projectsJson.project[i];
 
-				project.Id = projectJson.id;
-				project.Name = projectJson.name;
-				AddBuilds(ref project);
+                project.Id = projectJson.id;
+                project.Name = projectJson.name;
+                AddBuilds(ref project);
 
-				model.Projects.Add(project);
-			}
+                model.Projects.Add(project);
+            }
 
-			return model;
-		}
+            return model;
+        }
 
-		private void AddBuilds(ref Project project)
-		{
-			var count = (int)buildTypesJson.count;
-			for (int i = 0; i < count; i++)
-			{
-				var buildTypeJson = buildTypesJson.buildType[i];
+        private void AddBuilds(ref Project project)
+        {
+            var count = (int)buildTypesJson.count;
+            for (int i = 0; i < count; i++)
+            {
+                var buildTypeJson = buildTypesJson.buildType[i];
 
-				if (buildTypeJson.projectId != project.Id)
-				{
-					continue;
-				}
+                if (buildTypeJson.projectId != project.Id)
+                {
+                    continue;
+                }
 
-				var build = new Build();
-				build.Id = buildTypeJson.id;
-				build.Name = buildTypeJson.name;
+                var build = new Build();
+                build.Id = buildTypeJson.id;
+                build.Name = buildTypeJson.name;
 
-				var url = string.Format(buildStatusUrl, build.Id);
-				var buildStatusJsonString = RequestHelper.GetJson(url);
-				buildStatusJson = JsonConvert.DeserializeObject<dynamic>(buildStatusJsonString ?? string.Empty);
+                var url = string.Format(buildStatusUrl, build.Id);
+                var buildStatusJsonString = RequestHelper.GetJson(url);
+                buildStatusJson = JsonConvert.DeserializeObject<dynamic>(buildStatusJsonString ?? string.Empty);
 
                 build.Branch = (buildStatusJson != null) ? (buildStatusJson.branchName ?? "default") : "unknown";
                 build.Status = GetBuildStatusForRunningBuild(build.Id);
 
-				if (build.Status == BuildStatus.Running)
-				{
-					UpdateBuildStatusFromRunningBuildJson(build.Id);
-				}
+                if (build.Status == BuildStatus.Running)
+                {
+                    UpdateBuildStatusFromRunningBuildJson(build.Id);
+                }
 
-				build.UpdatedBy = GetUpdatedBy();
-				build.LastRunText = GetLastRunText();
-				build.IsQueued = IsBuildQueued(build.Id);
-				build.StatusDescription = (string)buildStatusJson.statusText;
+                build.UpdatedBy = RemoveAt(GetUpdatedBy());
+                build.LastRunText = GetLastRunText();
+                build.IsQueued = IsBuildQueued(build.Id);
+                build.StatusDescription = (string)buildStatusJson.statusText;
 
-				if (build.Status == BuildStatus.Running)
-				{
-					var result = GetRunningBuildBranchAndProgress(build.Id);
-					build.Branch = result[0];
-					build.Progress = result[1];
-				}
-				else
-				{
-					build.Progress = string.Empty;
-				}
+                if (build.Status == BuildStatus.Running)
+                {
+                    var result = GetRunningBuildBranchAndProgress(build.Id);
+                    build.Branch = result[0];
+                    build.Progress = result[1];
+                }
+                else
+                {
+                    build.Progress = string.Empty;
+                }
 
-				project.Builds.Add(build);
-			}
-		}
+                project.Builds.Add(build);
+            }
+        }
 
-		private bool IsBuildQueued(string buildId)
-		{
-			try
-			{
-				var count = (int)buildQueueJson.count;
-				for (int i = 0; i < count; i++)
-				{
-					var build = buildQueueJson.build[i];
+        private bool IsBuildQueued(string buildId)
+        {
+            try
+            {
+                var count = (int)buildQueueJson.count;
+                for (int i = 0; i < count; i++)
+                {
+                    var build = buildQueueJson.build[i];
 
-					if (buildId == (string)build.buildTypeId && (string)build.state == "queued")
-					{
-						return true;
-					}
-				}
-			}
-			catch
-			{
-			}
+                    if (buildId == (string)build.buildTypeId && (string)build.state == "queued")
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		private string GetUpdatedBy()
-		{
-			try
-			{
-				var triggerType = (string)buildStatusJson.triggered.type;
+        private string GetUpdatedBy()
+        {
+            try
+            {
+                var triggerType = (string)buildStatusJson.triggered.type;
                 if (triggerType == "user")
-				{
-					return (string)buildStatusJson.triggered.user.name;
-				}
+                {
+                    return (string)buildStatusJson.triggered.username;
+                }
 
-				if (triggerType == "vcs" && buildStatusJson.lastChanges != null)
-				{
-					var result = RequestHelper.GetJson(teamCityUrl + buildStatusJson.lastChanges.change[0].href);
-					var change = JsonConvert.DeserializeObject<dynamic>(result);
+                if ((triggerType == "vcs" || triggerType == "finishBuild") && buildStatusJson.lastChanges != null)
+                {
+                    var result = RequestHelper.GetJson(teamCityUrl + buildStatusJson.lastChanges.change[0].href);
+                    var change = JsonConvert.DeserializeObject<dynamic>(result);
 
-					return (string)change.user.name;
-				}
+                    return (string)change.username;
+                }
 
-				if (triggerType == "unknown")
-				{
-					return "TeamCity";
-				}
-			}
-			catch
-			{
-			}
+                if (triggerType == "unknown")
+                {
+                    return "TeamCity";
+                }
+            }
+            catch
+            {
+            }
 
-			return "Unknown";
-		}
-	}
+            return "Unknown";
+        }
+        private string RemoveAt(string getUpdatedBy)
+        {
+            var index = getUpdatedBy.IndexOf('@');
+            if (index > 0)
+            {
+                return getUpdatedBy.Substring(0, index);
+            }
+            return getUpdatedBy;
+        }
+    }
 }
