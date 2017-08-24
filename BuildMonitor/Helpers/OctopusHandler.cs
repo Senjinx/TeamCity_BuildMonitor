@@ -23,43 +23,7 @@ namespace BuildMonitor.Helpers
         public OctopusMonitorViewModel GetModel()
         {
             json = JsonConvert.DeserializeObject<dynamic>(GetJson());
-            var model = new OctopusMonitorViewModel();
-
-            var projects = json.Projects;
-            foreach (var project in projects)
-            {
-                var octopusProject = new OctopusProject
-                {
-                    Id = project.Id,
-                    Name = project.Name
-                };
-
-                List<dynamic> environmentList = json.Environments.ToObject<List<dynamic>>();
-                List<dynamic> currentEnvironmentList = project.EnvironmentIds.ToObject<List<dynamic>>();
-                List<dynamic> itemList = json.Items.ToObject<List<dynamic>>();
-
-                octopusProject.OctopusEnvironments.AddRange(environmentList
-                    .Where(e => currentEnvironmentList.Contains(e.Id.ToString()))
-                    .Select(e => new OctopusEnvironment()
-                    {
-                        Id = e.Id,
-                        Name = e.Name,
-                        OctopusItem = itemList
-                            .Select(i => new OctopusItem()
-                            {
-                                EnvironmentId = i.EnvironmentId,
-                                Id = i.Id,
-                                ProjectId = i.ProjectId,
-                                State = i.State,
-                                ReleaseVersion = i.ReleaseVersion
-                            })
-                            .FirstOrDefault(i => (i.ProjectId.Equals(project.Id.ToString()) && i.EnvironmentId.Equals( e.Id.ToString())))
-                    }));
-
-                model.OctopusProjects.Add(octopusProject);
-            }
-
-
+            var model = new OctopusMonitorViewModel(json);
 
             return model;
         }
