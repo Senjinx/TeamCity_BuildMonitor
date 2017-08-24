@@ -10,15 +10,35 @@
 		continue;
 	}
 
-	<div class="projectRow">
-		<h3 class="projectTitle">▪▪▪ @project.Name ▪▪▪</h3>
-		<div class="row">
-			@foreach (var build in project.Builds)
-			{
-				@Html.Partial("~/Views/Shared/_BuildItem.cshtml", build);
-			}
-		</div>
-	</div>
+    <div class="projectRow">
+        
+        <div class="row">
+            <div class ="col-md-4" align="center">
+                <h3 class="projectTitle">▪▪▪ TeamCity ▪▪▪</h3>
+            </div>
+            <div class="col-md-8" align="center">
+                <h3 class="projectTitle" >▪▪▪ Octopus ▪▪▪</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                @foreach (var build in project.Builds)
+                {
+                    @Html.Partial("~/Views/Shared/_BuildItem.cshtml", build)
+                    ;
+                }
+            </div>
+            <div class="col-md-8">
+                <div class ="row">
+                @foreach (var build in project.Builds)
+                {
+                    @Html.Partial("~/Views/Shared/_BuildOctopus.cshtml", build)
+                    ;
+                }
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 @section scripts {

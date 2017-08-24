@@ -112,31 +112,31 @@ html * {
 
 .status-Success {
 	font-family: kenzo;
-	font-size: 75px;
-	color: #A9E800;
+	font-size: 60px;
+	color: #64a338;
 	margin-top: -20px;
 	margin-bottom: -5px;
 }
 
 .status-Failure {
 	font-family: kenzo;
-	font-size: 75px;
-	color: #FB1B45;
+	font-size: 60px;
+	color: #e03b24;
 	margin-top: -20px;
 	margin-bottom: -5px;
 }
 
 .status-Error {
 	font-family: kenzo;
-	font-size: 75px;
-	color: #FB1B45;
+	font-size: 60px;
+	color: #e03b24 ;
 	margin-top: -20px;
 	margin-bottom: -5px;
 }
 
 .status-Running {
 	font-family: kenzo;
-	font-size: 75px;
+	font-size: 60px;
 	margin-top: -20px;
 	margin-bottom: -5px;
 	-webkit-animation-name: pulsate; /* Chrome, Safari, Opera */
@@ -162,7 +162,7 @@ html * {
 /* Chrome, Safari, Opera */
 @-webkit-keyframes pulsate {
 	0% {
-		color: #CFC291;
+		color: #ffcc00;
 	}
 
 	50% {
@@ -170,7 +170,7 @@ html * {
 	}
 
 	100% {
-		color: #CFC291;
+		color: #ffcc00;
 	}
 }
 
@@ -192,7 +192,7 @@ html * {
 /* Chrome, Safari, Opera */
 @-webkit-keyframes pulsate2 {
 	0% {
-		color: #FB1B45;
+		color: #e03b24;
 	}
 
 	50% {
@@ -200,14 +200,14 @@ html * {
 	}
 
 	100% {
-		color: #FB1B45;
+		color: #e03b24;
 	}
 }
 
 /* Color animation */
 @keyframes pulsate2 {
 	0% {
-		color: #FB1B45;
+		color: #e03b24;
 	}
 
 	50% {
@@ -215,7 +215,7 @@ html * {
 	}
 
 	100% {
-		color: #FB1B45;
+		color: #e03b24;
 	}
 }
 
