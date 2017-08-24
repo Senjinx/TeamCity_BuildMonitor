@@ -12,6 +12,10 @@ namespace BuildMonitor.Models.Home
             OctopusProjects = new List<OctopusProject>();
             foreach (var project in json.Projects)
             {
+                if (Object.ReferenceEquals(null, project))
+                {
+                    continue;
+                }
                 OctopusProjects.Add(new OctopusProject(json, project));
             }
         }
