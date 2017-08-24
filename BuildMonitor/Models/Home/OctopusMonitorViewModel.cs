@@ -7,9 +7,17 @@ namespace BuildMonitor.Models.Home
     {
         public List<OctopusProject> OctopusProjects { get; set; }
 
-        public OctopusMonitorViewModel()
+        public OctopusMonitorViewModel(dynamic json)
         {
             OctopusProjects = new List<OctopusProject>();
+            foreach (var project in json.Projects)
+            {
+                if (Object.ReferenceEquals(null, project))
+                {
+                    continue;
+                }
+                OctopusProjects.Add(new OctopusProject(json, project));
+            }
         }
     }
 }

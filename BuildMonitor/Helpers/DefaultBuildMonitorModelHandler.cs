@@ -128,10 +128,12 @@ namespace BuildMonitor.Helpers
         }
         private string RemoveAt(string getUpdatedBy)
         {
+
             if (getUpdatedBy == null)
             {
                 return "";
             }
+
             var index = getUpdatedBy.IndexOf('@');
             if (index > 0)
             {

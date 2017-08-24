@@ -10,5 +10,15 @@ namespace BuildMonitor.Models.Home
         public String State { get; set; }
         public String ReleaseVersion { get; set; }
 
+        public OctopusItem(dynamic i)
+        {
+            EnvironmentId = i.EnvironmentId;
+            Id = i.Id;
+            ProjectId = i.ProjectId;
+            State = i.State;
+            ReleaseVersion = i.ReleaseVersion;
+        }
+
+
     }
 }
