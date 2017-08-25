@@ -9,54 +9,44 @@
     <div class="projectRow">
         
         <div class="row">
-            <div class ="col-md-4" align="center">
+            <div class ="col-md-12" align="center">
                 <h3 class="projectTitle">▪▪▪ TeamCity ▪▪▪</h3>
             </div>
-            <div class="col-md-8" align="center">
+
+        </div>
+        <div class="row">
+            @foreach (var project in Model.BuildMonitor.Projects)
+            {
+                if (project.Builds.Count == 0)
+                {
+                    continue;
+                }
+                
+                
+                foreach (var build in project.Builds)
+                 {
+                     @Html.Partial("~/Views/Shared/_BuildItem.cshtml", build)
+
+                 }
+                
+            }
+                
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12" align="center">
                 <h3 class="projectTitle" >▪▪▪ Octopus ▪▪▪</h3>
             </div>
         </div>
-        <div class="row">
-        @foreach (var project in Model.BuildMonitor.Projects)
-        {
-            if (project.Builds.Count == 0)
+        <div class="row" >
+
+            @foreach (var octo in Model.OctopusMonitor.OctopusProjects)
             {
-                continue;
+                    <div class="row" align="center">
+                        @Html.Partial("~/Views/Shared/_BuildOctopus.cshtml", octo)
+                    </div>
             }
-            <div class="col-md-4">
-                @foreach (var build in project.Builds)
-                {
-                    @Html.Partial("~/Views/Shared/_BuildItem.cshtml", build)
-                    
-                }
-            </div>
-            <div class="col-md-1"></div>
-            <div class="col-md-7">
-                <div class="row">
-                    @foreach (var env in Model.OctopusMonitor.OctopusProjects.First().OctopusEnvironments)
-                    {
-                        <div class="col-md-2">
-                            <span>@env.Name</span>
-                        </div>
-                    }
 
-                </div>
-            </div>
-        }@foreach (var octo in Model.OctopusMonitor.OctopusProjects)
-        {
-
-            <div class="col-md-1">@octo.Name</div>
-             <div class="col-md-7">
-                 <div class="row">
-                     
-                     
-                         @Html.Partial("~/Views/Shared/_BuildOctopus.cshtml", octo)
-                          
-                          
-                     
-                 </div>
-             </div>
-         }
         </div>
     </div>
 

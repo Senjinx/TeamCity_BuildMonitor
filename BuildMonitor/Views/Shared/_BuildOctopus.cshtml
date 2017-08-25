@@ -3,13 +3,13 @@
 
 
 
-
+<div class="col-md-1"></div>
 @foreach (var env in Model.OctopusEnvironments)
 {
 
     <div  class="col-md-2">
         <div class="wellOctopus">
-            
+            <span>@env.Name</span>
             <span>@env.OctopusItem.State</span>
 
         </div>
