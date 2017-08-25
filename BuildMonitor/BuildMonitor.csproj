@@ -136,6 +136,7 @@
     <Compile Include="Helpers\RequestHelper.cs" />
     <Compile Include="Helpers\DefaultBuildMonitorModelHandler.cs" />
     <Compile Include="Models\Home\HiddenJob.cs" />
+    <Compile Include="Models\Home\ItemState.cs" />
     <Compile Include="Models\Home\MainMonitorViewMod.cs" />
     <Compile Include="Models\Home\OctopusEnvironment.cs" />
     <Compile Include="Models\Home\OctopusItem.cs" />
