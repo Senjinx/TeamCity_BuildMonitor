@@ -1,23 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Web.Management;
+using BuildMonitor.Helpers;
 
 namespace BuildMonitor.Models.Home
 {
     public class OctopusMonitorViewModel
     {
-        public List<OctopusProject> OctopusProjects { get; set; }
+        public List<OctopusEnvironment> OctopusEnvironments { get; set; }
 
         public OctopusMonitorViewModel(dynamic json)
         {
-            OctopusProjects = new List<OctopusProject>();
-            foreach (var project in json.Projects)
+            OctopusEnvironments = new List<OctopusEnvironment>();
+            foreach (var environment in json.Environments)
             {
-                if (Object.ReferenceEquals(null, project))
+                if (Object.ReferenceEquals(null, environment))
                 {
                     continue;
                 }
-                OctopusProjects.Add(new OctopusProject(json, project));
+                var tmp = new OctopusEnvironment(json, environment);
+                if (tmp.OctopusItems.Count > 0)
+                {
+                    OctopusEnvironments.Add(tmp);
+                }
             }
+            foreach (var env in OctopusEnvironments)
+            {
+                var success = env.OctopusItems.Any(i => !i.State.ToLower().Equals("sucess") && !i.State.ToLower().Equals("running"));
+                var running = env.OctopusItems.Any(i => i.State.ToLower().Equals("running"));
+
+                if (success) { env.State = ItemState.Failed; }
+                else if (running) { env.State = ItemState.Running; }
+                else { env.State = ItemState.Running; }
+            }
+            
         }
     }
 }

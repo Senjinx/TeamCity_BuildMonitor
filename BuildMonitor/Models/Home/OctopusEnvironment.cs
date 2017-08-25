@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BuildMonitor.Helpers;
 
 namespace BuildMonitor.Models.Home
 {
@@ -9,18 +10,26 @@ namespace BuildMonitor.Models.Home
 
         public String Name { get; set; }
         public String Id { get; set; }
+        public List<OctopusItem> OctopusItems { get; set; }
         public OctopusItem OctopusItem { get; set; }
+        public ItemState State { get; set; }
 
-        public OctopusEnvironment(dynamic json, dynamic e, dynamic project)
+
+        public OctopusEnvironment(dynamic json, dynamic e)
         {
-            List<dynamic> itemList = json.Items.ToObject<List<dynamic>>();
-
+            OctopusItems = new List<OctopusItem>();
             Name = e.Name;
             Id = e.Id;
-            OctopusItem = itemList
-                .Select(i => new OctopusItem(i))
-                .FirstOrDefault(i => i.ProjectId.Equals(project.Id.ToString())
-                                      && i.EnvironmentId.Equals(e.Id.ToString()));
+
+            List<dynamic> itemList = json.Items.ToObject<List<dynamic>>();
+            
+            foreach (var item in itemList)
+            {
+                if (Id.Equals(item.EnvironmentId.ToString()))
+                {
+                    OctopusItems.Add(new OctopusItem(item));
+                }
+            }
         }
     }
 }
