@@ -15,15 +15,13 @@ namespace BuildMonitor.Helpers
     public class OctopusHandler : IOctopusHandler
     {
         private dynamic json;
-        public string GetJson()
-        {
-            return HttpGet();
-        }
 
         public OctopusMonitorViewModel GetModel()
         {
-            json = JsonConvert.DeserializeObject<dynamic>(GetJson());
+
+            json = JsonConvert.DeserializeObject<dynamic>(HttpGet());
             var model = new OctopusMonitorViewModel(json);
+
 
             return model;
         }
@@ -44,11 +42,5 @@ namespace BuildMonitor.Helpers
 
             return s;
         }
-    }
-
-    public interface IOctopusHandler
-    {
-        string GetJson();
-        OctopusMonitorViewModel GetModel();
     }
 }
