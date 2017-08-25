@@ -1,12 +1,18 @@
-﻿@model BuildMonitor.Models.Home.Build
+﻿
+@model BuildMonitor.Models.Home.OctopusProject
 
 
-<div id="BuildDiv-@Model.Id" class="col-md-3">
-    <div class="wellOctopus">
-        <h4 class="buildTitle text-cutoff">@Model.Name</h4>
-        <h4 class="status-@Model.Status text-cutoff">@Model.StatusText</h4>
-        <p class="buildInfo text-cutoff">@Model.StatusDescription</p>
 
-        <p class="buildInfo text-cutoff">Last updated by <span class="buildInfoHighlight">@Model.UpdatedBy</span> @Model.LastRunText</p>
+<div class="col-md-1"></div>
+@foreach (var env in Model.OctopusEnvironments)
+{
+
+    <div  class="col-md-2">
+        <div class="wellOctopus">
+            <span>@env.Name</span>
+            <span>@env.OctopusItem.State</span>
+
+        </div>
     </div>
-</div>
+}
+

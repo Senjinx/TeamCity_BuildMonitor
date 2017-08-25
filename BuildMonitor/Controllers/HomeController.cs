@@ -34,10 +34,11 @@ namespace BuildMonitor.Controllers
 			return View(mainModel);
 		}
 
-	    public string GetOctopus()
+	    public JsonResult GetOctopus()
 	    {
-	        return _octopusHandler.GetJson();
-        }
+	        var model = _octopusHandler.GetModel();
+	        return Json(model, JsonRequestBehavior.AllowGet);
+	    }
 
 		public JsonResult GetBuilds()
 		{

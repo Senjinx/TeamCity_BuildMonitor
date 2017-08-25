@@ -3,43 +3,55 @@
 	ViewBag.Title = "Build Monitor";
 }
 
-@foreach (var project in Model.BuildMonitor.Projects)
-{
-	if (project.Builds.Count == 0)
-	{
-		continue;
-	}
+
+
 
     <div class="projectRow">
         
         <div class="row">
-            <div class ="col-md-4" align="center">
+            <div class ="col-md-12" align="center">
                 <h3 class="projectTitle">▪▪▪ TeamCity ▪▪▪</h3>
             </div>
-            <div class="col-md-8" align="center">
+
+        </div>
+        <div class="row">
+            @foreach (var project in Model.BuildMonitor.Projects)
+            {
+                if (project.Builds.Count == 0)
+                {
+                    continue;
+                }
+                
+                
+                foreach (var build in project.Builds)
+                 {
+                     @Html.Partial("~/Views/Shared/_BuildItem.cshtml", build)
+
+                 }
+                
+            }
+                
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12" align="center">
                 <h3 class="projectTitle" >▪▪▪ Octopus ▪▪▪</h3>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-4">
-                @foreach (var build in project.Builds)
-                {
-                    @Html.Partial("~/Views/Shared/_BuildItem.cshtml", build)
-                    ;
-                }
-            </div>
-            <div class="col-md-8">
-                <div class ="row">
-                @foreach (var build in project.Builds)
-                {
-                    @Html.Partial("~/Views/Shared/_BuildOctopus.cshtml", build)
-                    ;
-                }
-                </div>
-            </div>
+        <div class="row" >
+
+            @foreach (var octo in Model.OctopusMonitor.OctopusProjects)
+            {
+                    <div class="row" align="center">
+                        @Html.Partial("~/Views/Shared/_BuildOctopus.cshtml", octo)
+                    </div>
+            }
+
         </div>
     </div>
-}
+
+
+
 
 @section scripts {
 	@Scripts.Render("~/bundles/home")
