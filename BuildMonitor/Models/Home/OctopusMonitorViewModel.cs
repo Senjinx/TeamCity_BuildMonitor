@@ -27,12 +27,12 @@ namespace BuildMonitor.Models.Home
             }
             foreach (var env in OctopusEnvironments)
             {
-                var success = env.OctopusItems.Any(i => !i.State.ToLower().Equals("sucess") && !i.State.ToLower().Equals("running"));
+                var failed = env.OctopusItems.Any(i => !i.State.ToLower().Equals("success") && !i.State.ToLower().Equals("running"));
                 var running = env.OctopusItems.Any(i => i.State.ToLower().Equals("running"));
 
-                if (success) { env.State = ItemState.Failed; }
+                if (failed) { env.State = ItemState.Failed; }
                 else if (running) { env.State = ItemState.Running; }
-                else { env.State = ItemState.Running; }
+                else { env.State = ItemState.Success; }
             }
             
         }
