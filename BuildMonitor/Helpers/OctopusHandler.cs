@@ -14,18 +14,14 @@ namespace BuildMonitor.Helpers
 {
     public class OctopusHandler : IOctopusHandler
     {
-        private dynamic json;
-        public string GetJson()
-        {
-            return HttpGet();
-        }
+        private dynamic _json;
 
         public OctopusMonitorViewModel GetModel()
         {
-            json = JsonConvert.DeserializeObject<dynamic>(GetJson());
+            _json = JsonConvert.DeserializeObject<dynamic>(HttpGet());
             var model = new OctopusMonitorViewModel();
 
-            var projects = json.Projects;
+            var projects = _json.Projects;
             foreach (var project in projects)
             {
                 var octopusProject = new OctopusProject
@@ -34,9 +30,9 @@ namespace BuildMonitor.Helpers
                     Name = project.Name
                 };
 
-                List<dynamic> environmentList = json.Environments.ToObject<List<dynamic>>();
+                List<dynamic> environmentList = _json.Environments.ToObject<List<dynamic>>();
                 List<dynamic> currentEnvironmentList = project.EnvironmentIds.ToObject<List<dynamic>>();
-                List<dynamic> itemList = json.Items.ToObject<List<dynamic>>();
+                List<dynamic> itemList = _json.Items.ToObject<List<dynamic>>();
 
                 octopusProject.OctopusEnvironments.AddRange(environmentList
                     .Where(e => currentEnvironmentList.Contains(e.Id.ToString()))
@@ -80,11 +76,5 @@ namespace BuildMonitor.Helpers
 
             return s;
         }
-    }
-
-    public interface IOctopusHandler
-    {
-        string GetJson();
-        OctopusMonitorViewModel GetModel();
     }
 }
